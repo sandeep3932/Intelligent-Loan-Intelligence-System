@@ -34,7 +34,7 @@ def build_models(X_train, X_test, y_train, y_test):
     results = {}
     for name, base_model in base_models.items():
         print(f"Tuning {name}...")
-        grid_search = GridSearchCV(base_model, param_grids[name], cv=3, n_jobs=-1)
+        grid_search = GridSearchCV(base_model, param_grids[name], cv=5, n_jobs=-1)
         grid_search.fit(X_train, y_train)
         
         model = grid_search.best_estimator_
