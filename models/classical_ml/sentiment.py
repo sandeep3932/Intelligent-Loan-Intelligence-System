@@ -18,14 +18,14 @@ def load_data(filepath):
 
 def build_models(X_train, X_test, y_train, y_test):
     base_models = {
-        'Logistic Regression': LogisticRegression(max_iter=1000),
+        'Logistic Regression': LogisticRegression(penalty='elasticnet', solver='saga', max_iter=1000),
         'Naive Bayes': MultinomialNB(),
-        'Random Forest': RandomForestClassifier(random_state=42),
+        'Random Forest': RandomForestClassifier(criterion='gini', class_weight='balanced', random_state=42),
         'Linear SVM': LinearSVC(max_iter=2000, random_state=42)
     }
     
     param_grids = {
-        'Logistic Regression': {'C': [0.1, 1.0, 10.0]},
+        'Logistic Regression': {'C': [0.1, 1.0, 10.0], 'l1_ratio': [0.2, 0.5, 0.8]},
         'Naive Bayes': {'alpha': [0.1, 0.5, 1.0]},
         'Random Forest': {'n_estimators': [50, 100], 'max_depth': [None, 10]},
         'Linear SVM': {'C': [0.1, 1.0, 10.0]}
