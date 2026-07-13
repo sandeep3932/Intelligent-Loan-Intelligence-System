@@ -1,6 +1,6 @@
 import spacy
 import pandas as pd
-import os
+from pathlib import Path
 
 def load_data(filepath):
     df = pd.read_csv(filepath)
@@ -22,7 +22,8 @@ def extract_entities_batch(texts, nlp):
 
 if __name__ == "__main__":
     # NER requires the original unprocessed text (capitalization, punctuation intact)
-    dataset_path = 'hdfc_loan_dataset_full_enriched.csv'
+    repo_root = Path(__file__).resolve().parent.parent
+    dataset_path = repo_root / 'hdfc_loan_dataset_full_enriched.csv'
 
         
     print("Loading dataset...")
