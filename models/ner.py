@@ -11,7 +11,7 @@ def extract_entities_batch(texts, nlp):
     allowed_labels = {'PERSON', 'ORG', 'LOC', 'GPE', 'DATE', 'MONEY'}
     all_entities = []
     
-    # nlp.pipe is significantly faster than processing documents one by one in a loop or apply()
+
     for doc in nlp.pipe(texts, batch_size=50):
         entities = [(ent.text, ent.label_) for ent in doc.ents if ent.label_ in allowed_labels]
         all_entities.append(entities)
@@ -19,9 +19,10 @@ def extract_entities_batch(texts, nlp):
     return all_entities
 
 if __name__ == "__main__":
-    dataset_path = '../hdfc_loan_dataset_full_enriched.csv'
+    # NER requires the original unprocessed text (capitalization, punctuation intact)
+    dataset_path = 'hdfc_loan_dataset_full_enriched.csv'
     if not os.path.exists(dataset_path):
-        dataset_path = 'hdfc_loan_dataset_full_enriched.csv'
+        dataset_path = '../hdfc_loan_dataset_full_enriched.csv'
         
     print("Loading dataset...")
     df = load_data(dataset_path)
