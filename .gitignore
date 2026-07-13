@@ -1,0 +1,26 @@
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+
+# Environment variables
+.env
+.env.local
+
+# IDE and Editor directories
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Logs and cache
+*.log
+.pytest_cache/
+.coverage
+htmlcov/
