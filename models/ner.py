@@ -6,15 +6,17 @@ def load_data(filepath):
     df = pd.read_csv(filepath)
     return df
 
-def extract_entities(text, nlp):
-    if not isinstance(text, str):
-        return []
-    doc = nlp(text)
-    # Extract Person, Organization, Location, Dates, Money
-    # spaCy tags: PERSON, ORG, LOC, GPE, DATE, MONEY
+def extract_entities_batch(texts, nlp):
+    # Process texts in batches for better performance using nlp.pipe
     allowed_labels = {'PERSON', 'ORG', 'LOC', 'GPE', 'DATE', 'MONEY'}
-    entities = [(ent.text, ent.label_) for ent in doc.ents if ent.label_ in allowed_labels]
-    return entities
+    all_entities = []
+    
+    # nlp.pipe is significantly faster than processing documents one by one in a loop or apply()
+    for doc in nlp.pipe(texts, batch_size=50):
+        entities = [(ent.text, ent.label_) for ent in doc.ents if ent.label_ in allowed_labels]
+        all_entities.append(entities)
+        
+    return all_entities
 
 if __name__ == "__main__":
     dataset_path = '../hdfc_loan_dataset_full_enriched.csv'
@@ -25,7 +27,7 @@ if __name__ == "__main__":
     df = load_data(dataset_path)
     
     print("Loading spaCy model...")
-    # Make sure to run: python -m spacy download en_core_web_sm
+
     try:
         nlp = spacy.load("en_core_web_sm")
     except OSError:
@@ -34,9 +36,10 @@ if __name__ == "__main__":
         nlp = spacy.load("en_core_web_sm")
 
     print("Extracting entities from a sample of Agent_Notes...")
-    sample_df = df.dropna(subset=['Agent_Notes']).head(10).copy()
+    sample_df = df.dropna(subset=['Agent_Notes']).head(20).copy()
     
-    sample_df['Extracted_Entities'] = sample_df['Agent_Notes'].apply(lambda x: extract_entities(x, nlp))
+    texts = sample_df['Agent_Notes'].astype(str).tolist()
+    sample_df['Extracted_Entities'] = extract_entities_batch(texts, nlp)
     
     for idx, row in sample_df.iterrows():
         print(f"\nRow {idx}")
