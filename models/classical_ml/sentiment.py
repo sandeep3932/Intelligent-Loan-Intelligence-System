@@ -12,20 +12,18 @@ import os
 
 def load_data(filepath):
     df = pd.read_csv(filepath)
-    # Ensure no missing values in text or target
-    df = df.dropna(subset=['Customer_Feedback', 'Customer_Sentiment'])
     return df
 
 def build_models(X_train, X_test, y_train, y_test):
     base_models = {
-        'Logistic Regression': LogisticRegression(penalty='elasticnet', max_iter=1000),
+        'Logistic Regression': LogisticRegression(penalty='elasticnet', solver='saga', max_iter=1000),
         'Naive Bayes': MultinomialNB(),
         'Random Forest': RandomForestClassifier(criterion='gini', class_weight='balanced', random_state=42),
         'Linear SVM': LinearSVC(max_iter=2000, random_state=42)
     }
     
     param_grids = {
-        'Logistic Regression': {'C': [0.1, 1.0, 10.0]},
+        'Logistic Regression': {'C': [0.1, 1.0, 10.0], 'l1_ratio': [0.2, 0.5, 0.8]},
         'Naive Bayes': {'alpha': [0.1, 0.5, 1.0]},
         'Random Forest': {'n_estimators': [50, 100], 'max_depth': [None, 10]},
         'Linear SVM': {'C': [0.1, 1.0, 10.0]}
@@ -76,21 +74,27 @@ def build_models(X_train, X_test, y_train, y_test):
     return results
 
 if __name__ == "__main__":
-    dataset_path = '../../hdfc_loan_dataset_full_enriched.csv'
+    dataset_path = 'data/processed_dataset.csv'
     if not os.path.exists(dataset_path):
-        dataset_path = 'hdfc_loan_dataset_full_enriched.csv'
+        dataset_path = '../../data/processed_dataset.csv'
+        if not os.path.exists(dataset_path):
+            dataset_path = 'hdfc_loan_dataset_full_enriched.csv'
     
     print(f"Loading data from {dataset_path}...")
     df = load_data(dataset_path)
+    
+    text_col = 'Customer_Feedback_processed' if 'Customer_Feedback_processed' in df.columns else 'Customer_Feedback'
+    df = df.dropna(subset=[text_col, 'Customer_Sentiment'])
     
     # Encode target
     le = LabelEncoder()
     y = le.fit_transform(df['Customer_Sentiment'])
     print(f"Classes found: {le.classes_}")
+    print(f"Using text column: {text_col}")
     
-    # TF-IDF
-    vectorizer = TfidfVectorizer(stop_words='english', max_features=5000)
-    X = vectorizer.fit_transform(df['Customer_Feedback'])
+    # TF-IDF with n-grams
+    vectorizer = TfidfVectorizer(stop_words='english', ngram_range=(1, 2), max_features=10000)
+    X = vectorizer.fit_transform(df[text_col])
     
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
     
