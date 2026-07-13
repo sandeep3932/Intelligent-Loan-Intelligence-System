@@ -8,6 +8,8 @@ def load_data(filepath):
 
 def extract_entities_batch(texts, nlp):
     # Process texts in batches for better performance using nlp.pipe
+    # Entities to be recognized: person, organization, location, date and money
+
     allowed_labels = {'PERSON', 'ORG', 'LOC', 'GPE', 'DATE', 'MONEY'}
     all_entities = []
     
@@ -21,8 +23,7 @@ def extract_entities_batch(texts, nlp):
 if __name__ == "__main__":
     # NER requires the original unprocessed text (capitalization, punctuation intact)
     dataset_path = 'hdfc_loan_dataset_full_enriched.csv'
-    if not os.path.exists(dataset_path):
-        dataset_path = '../hdfc_loan_dataset_full_enriched.csv'
+
         
     print("Loading dataset...")
     df = load_data(dataset_path)
