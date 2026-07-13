@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 from sklearn.naive_bayes import MultinomialNB
@@ -17,16 +17,27 @@ def load_data(filepath):
     return df
 
 def build_models(X_train, X_test, y_train, y_test):
-    models = {
+    base_models = {
         'Logistic Regression': LogisticRegression(max_iter=1000),
         'Naive Bayes': MultinomialNB(),
-        'Random Forest': RandomForestClassifier(n_estimators=100, random_state=42),
-        'Linear SVM': LinearSVC(random_state=42)
+        'Random Forest': RandomForestClassifier(random_state=42),
+        'Linear SVM': LinearSVC(max_iter=2000, random_state=42)
+    }
+    
+    param_grids = {
+        'Logistic Regression': {'C': [0.1, 1.0, 10.0]},
+        'Naive Bayes': {'alpha': [0.1, 0.5, 1.0]},
+        'Random Forest': {'n_estimators': [50, 100], 'max_depth': [None, 10]},
+        'Linear SVM': {'C': [0.1, 1.0, 10.0]}
     }
     
     results = {}
-    for name, model in models.items():
-        model.fit(X_train, y_train)
+    for name, base_model in base_models.items():
+        print(f"Tuning {name}...")
+        grid_search = GridSearchCV(base_model, param_grids[name], cv=3, n_jobs=-1)
+        grid_search.fit(X_train, y_train)
+        
+        model = grid_search.best_estimator_
         preds = model.predict(X_test)
         
         # for ROC-AUC need probabilities or decision function
@@ -41,7 +52,6 @@ def build_models(X_train, X_test, y_train, y_test):
             decision = model.decision_function(X_test)
             if len(np.unique(y_train)) > 2:
                 # Approximate or use ovr, for LinearSVC predict_proba is not available
-                # LinearSVC decision function can be used but it's more complex for multi-class
                 roc_auc = np.nan # placeholder if multi-class
             else:
                 roc_auc = roc_auc_score(y_test, decision)
@@ -52,11 +62,12 @@ def build_models(X_train, X_test, y_train, y_test):
         else:
             avg = 'binary'
             
-        precision = precision_score(y_test, preds, average=avg)
-        recall = recall_score(y_test, preds, average=avg)
-        f1 = f1_score(y_test, preds, average=avg)
+        precision = precision_score(y_test, preds, average=avg, zero_division=0)
+        recall = recall_score(y_test, preds, average=avg, zero_division=0)
+        f1 = f1_score(y_test, preds, average=avg, zero_division=0)
         
         results[name] = {
+            'Best Params': grid_search.best_params_,
             'Precision': precision,
             'Recall': recall,
             'F1': f1,
@@ -90,4 +101,7 @@ if __name__ == "__main__":
     for model_name, metrics in results.items():
         print(f"\n{model_name}:")
         for metric_name, value in metrics.items():
-            print(f"  {metric_name}: {value:.4f}" if not np.isnan(value) else f"  {metric_name}: N/A")
+            if metric_name == 'Best Params':
+                print(f"  {metric_name}: {value}")
+            else:
+                print(f"  {metric_name}: {value:.4f}" if not np.isnan(value) else f"  {metric_name}: N/A")
