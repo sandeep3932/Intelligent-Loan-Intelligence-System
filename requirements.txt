@@ -10,3 +10,4 @@ scipy
 fastapi
 uvicorn
 streamlit
+sentence-transformers
