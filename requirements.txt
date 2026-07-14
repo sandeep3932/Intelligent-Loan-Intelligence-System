@@ -10,3 +10,5 @@ scipy
 fastapi
 uvicorn
 streamlit
+pytorch
+torch
