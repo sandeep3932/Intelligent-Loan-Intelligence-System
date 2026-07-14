@@ -10,3 +10,8 @@ scipy
 fastapi
 uvicorn
 streamlit
+<<<<<<< Updated upstream
+=======
+torch
+transformers
+>>>>>>> Stashed changes
