@@ -3,6 +3,7 @@ import numpy as np
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 import os
+import pickle
 
 def load_data(filepath):
     df = pd.read_csv(filepath)
@@ -11,7 +12,7 @@ def load_data(filepath):
     return df
 
 class SemanticSearchEngine:
-    def __init__(self, model_name='all-MiniLM-L6-v2'):
+    def __init__(self, model_name='all-mpnet-base-v2'):
         print(f"Loading SentenceTransformer model '{model_name}'...")
         self.model = SentenceTransformer(model_name)
         self.document_embeddings = None
@@ -23,6 +24,26 @@ class SemanticSearchEngine:
         print(f"Encoding {len(documents)} documents to build vector index...")
         self.document_embeddings = self.model.encode(documents, show_progress_bar=True)
         print("Vector index built successfully.")
+        
+    def save_index(self, filepath):
+        if self.document_embeddings is None or self.df is None:
+            raise ValueError("Index or dataframe not built.")
+        print(f"Saving vector index to {filepath}...")
+        os.makedirs(os.path.dirname(filepath), exist_ok=True)
+        with open(filepath, 'wb') as f:
+            pickle.dump({'embeddings': self.document_embeddings, 'df': self.df}, f)
+        print("Index saved successfully.")
+        
+    def load_index(self, filepath):
+        if os.path.exists(filepath):
+            print(f"Loading vector index from {filepath}...")
+            with open(filepath, 'rb') as f:
+                data = pickle.load(f)
+                self.document_embeddings = data['embeddings']
+                self.df = data['df']
+            print("Index loaded successfully.")
+            return True
+        return False
 
     def search(self, query, top_k=5):
         if self.document_embeddings is None:
@@ -57,8 +78,16 @@ if __name__ == "__main__":
     # Initialize Semantic Search Engine
     search_engine = SemanticSearchEngine()
     
-    # Build vector index on Application_Text
-    search_engine.build_vector_index(df, text_column='Application_Text')
+    # Check if index exists to load
+    index_path = '../saved_models/semantic_index.pkl'
+    if not os.path.exists('../saved_models'):
+        os.makedirs('../saved_models', exist_ok=True)
+        
+    if not search_engine.load_index(index_path):
+        # Build vector index on Application_Text
+        search_engine.build_vector_index(df, text_column='Application_Text')
+        # Save index for production reuse
+        search_engine.save_index(index_path)
     
     # Example queries from the assignment
     queries = [

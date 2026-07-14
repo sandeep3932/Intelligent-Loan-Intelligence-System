@@ -9,6 +9,7 @@ from sklearn.svm import LinearSVC
 from sklearn.metrics import precision_score, recall_score, f1_score, roc_auc_score
 from sklearn.preprocessing import LabelEncoder
 import os
+import joblib
 
 def load_data(filepath):
     df = pd.read_csv(filepath)
@@ -69,16 +70,22 @@ def build_models(X_train, X_test, y_train, y_test):
             'Precision': precision,
             'Recall': recall,
             'F1': f1,
-            'ROC-AUC': roc_auc
+            'ROC-AUC': roc_auc,
+            'Model': model
         }
-    return results
+        
+    best_model_name = max(results.keys(), key=lambda k: results[k]['F1'])
+    best_model_obj = results[best_model_name]['Model']
+    print(f"\nBest Model based on F1 Score: {best_model_name}")
+    
+    return results, best_model_name, best_model_obj
 
 if __name__ == "__main__":
     dataset_path = 'data/processed_dataset.csv'
     if not os.path.exists(dataset_path):
         dataset_path = '../../data/processed_dataset.csv'
         if not os.path.exists(dataset_path):
-            dataset_path = 'hdfc_loan_dataset_full_enriched.csv'
+            dataset_path = '../../hdfc_loan_dataset_full_enriched_fixed_v2.csv'
     
     print(f"Loading data from {dataset_path}...")
     df = load_data(dataset_path)
@@ -93,13 +100,13 @@ if __name__ == "__main__":
     print(f"Using text column: {text_col}")
     
     # TF-IDF with n-grams
-    vectorizer = TfidfVectorizer(stop_words='english', ngram_range=(1, 2), max_features=10000)
+    vectorizer = TfidfVectorizer(stop_words='english', ngram_range=(1, 2), max_features=40, min_df=2, max_df=0.85)
     X = vectorizer.fit_transform(df[text_col])
     
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
     
     print("Training and evaluating models...")
-    results = build_models(X_train, X_test, y_train, y_test)
+    results, best_model_name, best_model = build_models(X_train, X_test, y_train, y_test)
     
     print("\n--- Model Evaluation ---")
     for model_name, metrics in results.items():
@@ -107,5 +114,15 @@ if __name__ == "__main__":
         for metric_name, value in metrics.items():
             if metric_name == 'Best Params':
                 print(f"  {metric_name}: {value}")
-            else:
+            elif metric_name != 'Model':
                 print(f"  {metric_name}: {value:.4f}" if not np.isnan(value) else f"  {metric_name}: N/A")
+                
+    # Save the best model, vectorizer, and label encoder
+    save_dir = '../../saved_models/classical_ml'
+    os.makedirs(save_dir, exist_ok=True)
+    
+    print(f"\nSaving best model ({best_model_name}) and preprocessing objects to {save_dir}...")
+    joblib.dump(best_model, os.path.join(save_dir, 'sentiment_model.pkl'))
+    joblib.dump(vectorizer, os.path.join(save_dir, 'sentiment_vectorizer.pkl'))
+    joblib.dump(le, os.path.join(save_dir, 'sentiment_label_encoder.pkl'))
+    print("Models saved successfully.")
