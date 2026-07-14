@@ -7,7 +7,11 @@ import pickle
 
 def load_data(filepath):
     df = pd.read_csv(filepath)
-    # Treat each customer application as a document for semantic retrieval
+    # Combine relevant text columns into a single document for better semantic matching
+    df['Combined_Text'] = df['Application_Text'].fillna('') + " " + \
+                          df['Customer_Feedback'].fillna('') + " " + \
+                          df['Agent_Notes'].fillna('') + " " + \
+                          df.get('Customer_Sentiment', pd.Series([''] * len(df))).fillna('')
     df = df.dropna(subset=['Application_Text']).reset_index(drop=True)
     return df
 
@@ -61,16 +65,18 @@ class SemanticSearchEngine:
         for idx in top_indices:
             results.append({
                 'score': similarities[idx],
-                'document': self.df.iloc[idx]['Application_Text'],
+                'document': self.df.iloc[idx]['Combined_Text'],
                 'customer_name': self.df.iloc[idx].get('Customer_Name', 'N/A'),
                 'loan_status': self.df.iloc[idx].get('Loan_Status', 'N/A')
             })
         return results
 
 if __name__ == "__main__":
-    dataset_path = '../hdfc_loan_dataset_full_enriched.csv'
+    dataset_path = '../hdfc_loan_dataset_full_enriched_fixed_v2.csv'
     if not os.path.exists(dataset_path):
-        dataset_path = 'hdfc_loan_dataset_full_enriched.csv'
+        dataset_path = '../../hdfc_loan_dataset_full_enriched_fixed_v2.csv'
+        if not os.path.exists(dataset_path):
+            dataset_path = 'hdfc_loan_dataset_full_enriched_fixed_v2.csv'
         
     print("Loading dataset...")
     df = load_data(dataset_path)
@@ -79,13 +85,13 @@ if __name__ == "__main__":
     search_engine = SemanticSearchEngine()
     
     # Check if index exists to load
-    index_path = '../saved_models/semantic_index.pkl'
+    index_path = '../saved_models/semantic_index_v2.pkl'
     if not os.path.exists('../saved_models'):
         os.makedirs('../saved_models', exist_ok=True)
         
     if not search_engine.load_index(index_path):
-        # Build vector index on Application_Text
-        search_engine.build_vector_index(df, text_column='Application_Text')
+        # Build vector index on Combined_Text
+        search_engine.build_vector_index(df, text_column='Combined_Text')
         # Save index for production reuse
         search_engine.save_index(index_path)
     
