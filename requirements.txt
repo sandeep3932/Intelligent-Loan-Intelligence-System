@@ -10,3 +10,9 @@ scipy
 fastapi
 uvicorn
 streamlit
+pytorch
+torch
+fastapi
+uvicorn
+streamlit
+requests
