@@ -1,14 +1,19 @@
 import pandas as pd
-from transformers import pipeline
+from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
+import torch
 
 print("=" * 60)
 print("Loading Question Answering Model...")
 print("=" * 60)
 
-qa_pipeline = pipeline(
-    "text2text-generation",
-    model="google/flan-t5-base"
-)
+device = "cuda" if torch.cuda.is_available() else "cpu"
+tokenizer = AutoTokenizer.from_pretrained("google/flan-t5-base")
+model = AutoModelForSeq2SeqLM.from_pretrained("google/flan-t5-base").to(device)
+
+def qa_pipeline(prompt, max_new_tokens=50):
+    inputs = tokenizer(prompt, return_tensors="pt").to(device)
+    outputs = model.generate(**inputs, max_new_tokens=max_new_tokens)
+    return [{"generated_text": tokenizer.decode(outputs[0], skip_special_tokens=True)}]
 
 print("Model Loaded Successfully!\n")
 
