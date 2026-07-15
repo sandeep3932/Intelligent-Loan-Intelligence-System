@@ -274,7 +274,7 @@ Loan-NLP-System/
 Dataset Used
 
 ```
-hdfc_loan_dataset_full_enriched.csv
+processed_dataset.csv
 ```
 
 Primary Text Columns
