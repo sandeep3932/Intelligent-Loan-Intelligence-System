@@ -24,9 +24,9 @@ print("Model Loaded Successfully!\n")
 df = pd.read_csv("data/processed_dataset.csv")
 
 
-# -------------------------------------------------
+
 # Structured Question Handler
-# -------------------------------------------------
+
 
 def structured_query(question):
 
@@ -92,18 +92,37 @@ def structured_query(question):
     return None
 
 
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+
+# Precompute TF-IDF matrix for context retrieval
+app_texts = df["Application_Text"].fillna("").tolist()
+tfidf = TfidfVectorizer(stop_words='english')
+tfidf_matrix = tfidf.fit_transform(app_texts)
+
+def get_relevant_context(question, top_n=3):
+    q_vec = tfidf.transform([question])
+    sims = cosine_similarity(q_vec, tfidf_matrix).flatten()
+    top_indices = sims.argsort()[-top_n:][::-1]
+    context_parts = []
+    for idx in top_indices:
+        if sims[idx] > 0:
+            context_parts.append(app_texts[idx])
+    return "\n".join(context_parts)
+
 # -------------------------------------------------
 # BERT Question Answering
 # -------------------------------------------------
 
 def bert_answer(question):
 
-    context = " ".join(
-        df["Application_Text"].astype(str).tolist()
-    )[:3000]
-
+    context = get_relevant_context(question, top_n=1)
+    # Truncate context to ~1500 characters to fit within 512 token limit
+    if len(context) > 1500:
+        context = context[:1500] + "..."
+    
     prompt = f"""
-Answer the following question using the context.
+Answer the following question based ONLY on the given context. If the answer is not in the context, answer based on your knowledge.
 
 Context:
 {context}
@@ -116,7 +135,7 @@ Answer:
 
     result = qa_pipeline(
         prompt,
-        max_new_tokens=50
+        max_new_tokens=150
     )
 
     return result[0]["generated_text"]
@@ -131,16 +150,11 @@ def ask_question(question):
     result = structured_query(question)
 
     if result is not None:
+        if result.empty:
+            return "No matching records found."
+        return result.head(10).to_string(index=False)
 
-        print("\nStructured Query Result\n")
-
-        print(result.head(20))
-
-        return
-
-    print("\nBERT Answer\n")
-
-    print(bert_answer(question))
+    return bert_answer(question)
 
 
 # -------------------------------------------------

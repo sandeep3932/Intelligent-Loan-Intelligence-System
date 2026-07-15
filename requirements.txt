@@ -12,3 +12,7 @@ uvicorn
 streamlit
 pytorch
 torch
+fastapi
+uvicorn
+streamlit
+requests
