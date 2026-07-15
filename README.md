@@ -34,3 +34,24 @@ Loan-NLP-System/
 ├── requirements.txt         # Project dependencies
 └── README.md                # Project documentation
 ```
+
+## How to Run the Application
+
+The application is split into a **FastAPI backend** and a **Streamlit frontend**. You need to run both simultaneously in separate terminal windows.
+
+### 1. Start the FastAPI Backend
+Open your terminal, ensure your virtual environment is activated, and navigate to the `api` directory:
+```bash
+cd api
+python -m uvicorn main:app --reload
+```
+*The API will start at `http://localhost:8000`. You can view the Swagger UI documentation at `http://localhost:8000/docs`.*
+
+### 2. Start the Streamlit Dashboard
+Open a **new** terminal window, activate your virtual environment, and navigate to the `streamlit` directory:
+```bash
+cd streamlit
+python -m streamlit run app.py
+```
+*The dashboard will automatically open in your browser at `http://localhost:8501`. If you are running on a server, you might need to use `--server.headless true`.*
+gitignore

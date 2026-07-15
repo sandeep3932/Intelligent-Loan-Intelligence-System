@@ -35,7 +35,13 @@ def load_models():
 
     print("Loading spaCy NER Model...")
     try:
-        nlp_ner = spacy.load("en_core_web_md")
+        custom_ner_path = os.path.join(root_dir, 'saved_models', 'custom_ner')
+        if os.path.exists(custom_ner_path):
+            nlp_ner = spacy.load(custom_ner_path)
+            print(f"Loaded custom NER model from {custom_ner_path}")
+        else:
+            nlp_ner = spacy.load("en_core_web_md")
+            print("Custom NER model not found, loaded fallback: en_core_web_md")
     except Exception as e:
         print(f"Failed to load spaCy model: {e}")
 

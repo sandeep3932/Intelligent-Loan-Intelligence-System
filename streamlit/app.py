@@ -42,7 +42,10 @@ elif page == "Named Entity Recognition":
     st.markdown("Extract key entities like Persons, Organizations, Locations, Dates, and Money from text.")
     
     with st.form("ner_form"):
-        text_input = st.text_area("Enter Text (e.g., Agent Notes):")
+        text_input = st.text_area(
+            "Enter Text (e.g., Application Text, Agent Notes):",
+            placeholder="e.g. Rohan Verma approached HDFC Bank seeking a home loan of INR 8,031,545. The applicant is from Mumbai."
+        )
         submit = st.form_submit_button("Extract Entities")
         
     if submit and text_input:
