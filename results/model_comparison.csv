@@ -1,0 +1,6 @@
+Metric,RNN,LSTM
+Accuracy,1.0,1.0
+Loss,0.005709558259695768,0.00893176905810833
+Precision,1.0,1.0
+Recall,1.0,1.0
+F1 Score,1.0,1.0

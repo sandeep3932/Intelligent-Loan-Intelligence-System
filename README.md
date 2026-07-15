@@ -1,57 +1,227 @@
-# Intelligent Loan Intelligence Platform using NLP, Machine Learning, Deep Learning & Transformers
+# 🏦 Intelligent Loan Intelligence Platform using NLP
 
-An AI-powered Loan Intelligence Platform using NLP, Machine Learning, Deep Learning, and Transformer models for sentiment analysis, semantic search, loan classification, NER, and question answering.
+An end-to-end AI-powered Loan Intelligence Platform built using **Natural Language Processing, Machine Learning, Deep Learning, Transformers, FastAPI, and Streamlit**.
 
-## Project Overview
-This project builds an end-to-end NLP system capable of understanding customer applications, feedback, agent remarks, and semantic queries from a banking loan dataset. 
+The platform analyzes customer loan applications, feedback, and agent remarks to perform:
 
-It is divided among three engineers:
-- **Engineer 1:** NLP Preprocessing & Feature Engineering
-- **Engineer 2:** NLP Intelligence Models
-- **Engineer 3:** Deep Learning & Transformer Models
+- Loan Status Prediction
+- Customer Sentiment Analysis
+- Named Entity Recognition (NER)
+- Semantic Search
+- Question Answering
+- Similar Customer Retrieval
+- Loan Analytics Dashboard
 
-Currently, the foundation for **Engineer 1** has been implemented, including robust text preprocessing pipelines, exploratory data analysis, traditional feature engineering (CountVectorizer, TF-IDF, One-Hot Encoding), and advanced word embeddings (Word2Vec, FastText, GloVe).
+---
 
-## Folder Structure
+# 📌 Project Overview
+
+Traditional loan processing mainly relies on structured information such as CIBIL score, employment status, and income. However, valuable information also exists inside textual data like customer applications, feedback, and agent remarks.
+
+This project extracts meaningful insights from these text fields using modern NLP techniques and provides intelligent APIs for banking applications.
+
+---
+
+# 🚀 Features
+
+## NLP Preprocessing
+
+- Lowercasing
+- Regex Cleaning
+- Stopword Removal
+- Tokenization
+- Punctuation Removal
+- Number Removal
+- Lemmatization
+- Stemming
+
+---
+
+## Exploratory NLP Analysis
+
+- Word Frequency
+- Vocabulary Statistics
+- Word Clouds
+- Bigrams
+- Trigrams
+
+---
+
+## Feature Engineering
+
+- Count Vectorizer
+- TF-IDF
+- One Hot Encoding
+- Feature Dimension Comparison
+
+---
+
+## Word Embeddings
+
+- Word2Vec (CBOW)
+- Word2Vec (Skip-Gram)
+- FastText
+- GloVe
+
+Comparison includes:
+
+- Vocabulary Coverage
+- OOV Handling
+- Similarity Performance
+
+---
+
+## Classical Machine Learning Models
+
+Customer Sentiment Classification
+
+- Logistic Regression
+- Naive Bayes
+- Random Forest
+- Linear SVM
+
+Evaluation Metrics
+
+- Accuracy
+- Precision
+- Recall
+- F1 Score
+- ROC-AUC
+
+---
+
+## Named Entity Recognition
+
+Extracts
+
+- Person
+- Organization
+- Location
+- Dates
+- Money
+
+using **spaCy**
+
+---
+
+## Semantic Search
+
+Uses
+
+- Sentence Transformers
+- Cosine Similarity
+
+Supports queries such as
+
+- Education loan requests
+- Dissatisfied customers
+- Home renovation applications
+- Delayed approvals
+- Positive customer experiences
+
+Returns Top-K most similar applications.
+
+---
+
+## Resume-style Semantic Retrieval
+
+Each customer application is indexed as a document.
+
+Supports
+
+- Semantic Retrieval
+- Vector Indexing
+- Similar Customer Search
+
+---
+
+## Deep Learning Models
+
+### RNN
+
+Predicts Customer Sentiment.
+
+### LSTM
+
+Compares performance with RNN.
+
+Evaluation
+
+- Accuracy
+- Loss
+- Precision
+- Recall
+
+---
+
+## Transformer Model
+
+Fine-tuned BERT for Loan Status Prediction.
+
+Evaluation
+
+- Accuracy
+- F1 Score
+- Confusion Matrix
+
+---
+
+## Question Answering System
+
+Built using Hugging Face Transformers.
+
+Example Questions
+
+- Why was my loan rejected?
+- Which applicants have low credit history?
+- Show customers requesting business loans.
+- What documents are required?
+
+---
+
+# 📁 Project Structure
+
 ```
 Loan-NLP-System/
 │
-├── data/                    # Contains processed datasets and engineered feature matrices (.npz)
-├── notebooks/               # Jupyter notebooks for interactive analysis
-├── preprocessing/           # Preprocessing and Feature Engineering scripts
+├── api/
+│   ├── main.py
+│
+├── data/
+│
+├── notebooks/
+│
+├── preprocessing/
 │   ├── preprocessing.py
-│   └── feature_engineering.py
-├── embeddings/              # Embedding model scripts
-│   └── embedding_models.py
-├── models/                  # Trained Machine Learning and Deep Learning models
+│   ├── feature_engineering.py
+│
+├── embeddings/
+│   ├── embedding_models.py
+│
+├── models/
 │   ├── classical_ml/
+│   │      ├── sentiment.py
+│   │      ├── ner.py
+│   │      ├── semantic_search.py
+│   │
 │   ├── deep_learning/
-│   └── transformers/
-├── api/                     # FastAPI deployment (To be implemented)
-├── streamlit/               # Streamlit dashboard (To be implemented)
-├── utils/                   # Shared utility scripts
-├── saved_models/            # Trained embedding models and vectorizers
-├── requirements.txt         # Project dependencies
-└── README.md                # Project documentation
+│   │      ├── rnn.py
+│   │      ├── lstm.py
+│   │
+│   ├── transformers/
+│          ├── bert_classifier.py
+│          ├── qa_engine.py
+│
+├── saved_models/
+│
+├── streamlit/
+│   └── app.py
+│
+├── utils/
+│
+├── requirements.txt
+│
+└── README.md
 ```
 
-## How to Run the Application
 
-The application is split into a **FastAPI backend** and a **Streamlit frontend**. You need to run both simultaneously in separate terminal windows.
-
-### 1. Start the FastAPI Backend
-Open your terminal, ensure your virtual environment is activated, and navigate to the `api` directory:
-```bash
-cd api
-python -m uvicorn main:app --reload
-```
-*The API will start at `http://localhost:8000`. You can view the Swagger UI documentation at `http://localhost:8000/docs`.*
-
-### 2. Start the Streamlit Dashboard
-Open a **new** terminal window, activate your virtual environment, and navigate to the `streamlit` directory:
-```bash
-cd streamlit
-python -m streamlit run app.py
-```
-*The dashboard will automatically open in your browser at `http://localhost:8501`. If you are running on a server, you might need to use `--server.headless true`.*
-gitignore
