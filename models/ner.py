@@ -32,11 +32,11 @@ if __name__ == "__main__":
     print("Loading spaCy model...")
 
     try:
-        nlp = spacy.load("en_core_web_md")
+        nlp = spacy.load("en_core_web_lg")
     except OSError:
         import spacy.cli
-        spacy.cli.download("en_core_web_md")
-        nlp = spacy.load("en_core_web_md")
+        spacy.cli.download("en_core_web_lg")
+        nlp = spacy.load("en_core_web_lg")
 
     print("Extracting entities from Agent_Notes...")
     process_df = df.dropna(subset=['Agent_Notes']).copy()
