@@ -149,9 +149,9 @@ if __name__ == "__main__":
     print("Starting Preprocessing & EDA Pipeline")
     print("=========================================")
     
-    dataset_path = 'hdfc_loan_dataset_full_enriched.csv'
+    dataset_path = 'hdfc_loan_dataset_full_enriched_fixed_v2.csv'
     if not os.path.exists(dataset_path):
-        dataset_path = '../hdfc_loan_dataset_full_enriched.csv' # Try root if running from preprocessing/
+        dataset_path = '../hdfc_loan_dataset_full_enriched_fixed_v2.csv' # Try root if running from preprocessing/
         if not os.path.exists(dataset_path):
             raise FileNotFoundError(f"Error: Real dataset not found at {dataset_path}. Please place hdfc_loan_dataset_full_enriched.csv in the directory.")
 

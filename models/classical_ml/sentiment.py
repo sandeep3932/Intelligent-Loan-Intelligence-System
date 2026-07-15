@@ -1,0 +1,128 @@
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split, GridSearchCV
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.linear_model import LogisticRegression
+from sklearn.naive_bayes import MultinomialNB
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.svm import LinearSVC
+from sklearn.metrics import precision_score, recall_score, f1_score, roc_auc_score
+from sklearn.preprocessing import LabelEncoder
+import os
+import joblib
+
+def load_data(filepath):
+    df = pd.read_csv(filepath)
+    return df
+
+def build_models(X_train, X_test, y_train, y_test):
+    base_models = {
+        'Logistic Regression': LogisticRegression(penalty='elasticnet', solver='saga', max_iter=1000),
+        'Naive Bayes': MultinomialNB(),
+        'Random Forest': RandomForestClassifier(criterion='gini', class_weight='balanced', random_state=42),
+        'Linear SVM': LinearSVC(max_iter=2000, random_state=42)
+    }
+    
+    param_grids = {
+        'Logistic Regression': {'C': [0.1, 1.0, 10.0], 'l1_ratio': [0.2, 0.5, 0.8]},
+        'Naive Bayes': {'alpha': [0.1, 0.5, 1.0]},
+        'Random Forest': {'n_estimators': [50, 100], 'max_depth': [None, 10]},
+        'Linear SVM': {'C': [0.1, 1.0, 10.0]}
+    }
+    
+    results = {}
+    for name, base_model in base_models.items():
+        print(f"Tuning {name}...")
+        grid_search = GridSearchCV(base_model, param_grids[name], cv=5, n_jobs=-1)
+        grid_search.fit(X_train, y_train)
+        
+        model = grid_search.best_estimator_
+        preds = model.predict(X_test)
+        
+        # for ROC-AUC need probabilities or decision function
+        if hasattr(model, "predict_proba"):
+            probs = model.predict_proba(X_test)
+            # handle multi-class roc auc if needed, assuming binary for now
+            if len(np.unique(y_train)) > 2:
+                roc_auc = roc_auc_score(y_test, probs, multi_class='ovr')
+            else:
+                roc_auc = roc_auc_score(y_test, probs[:, 1])
+        else:
+            decision = model.decision_function(X_test)
+            if len(np.unique(y_train)) > 2:
+                # Approximate or use ovr, for LinearSVC predict_proba is not available
+                roc_auc = np.nan # placeholder if multi-class
+            else:
+                roc_auc = roc_auc_score(y_test, decision)
+                
+        # If multi-class, need average='macro' or 'weighted'
+        if len(np.unique(y_train)) > 2:
+            avg = 'weighted'
+        else:
+            avg = 'binary'
+            
+        precision = precision_score(y_test, preds, average=avg, zero_division=0)
+        recall = recall_score(y_test, preds, average=avg, zero_division=0)
+        f1 = f1_score(y_test, preds, average=avg, zero_division=0)
+        
+        results[name] = {
+            'Best Params': grid_search.best_params_,
+            'Precision': precision,
+            'Recall': recall,
+            'F1': f1,
+            'ROC-AUC': roc_auc,
+            'Model': model
+        }
+        
+    best_model_name = max(results.keys(), key=lambda k: results[k]['F1'])
+    best_model_obj = results[best_model_name]['Model']
+    print(f"\nBest Model based on F1 Score: {best_model_name}")
+    
+    return results, best_model_name, best_model_obj
+
+if __name__ == "__main__":
+    dataset_path = 'data/processed_dataset.csv'
+    if not os.path.exists(dataset_path):
+        dataset_path = '../../data/processed_dataset.csv'
+        if not os.path.exists(dataset_path):
+            dataset_path = '../../hdfc_loan_dataset_full_enriched_fixed_v2.csv'
+    
+    print(f"Loading data from {dataset_path}...")
+    df = load_data(dataset_path)
+    
+    text_col = 'Customer_Feedback_processed' if 'Customer_Feedback_processed' in df.columns else 'Customer_Feedback'
+    df = df.dropna(subset=[text_col, 'Customer_Sentiment'])
+    
+    # Encode target
+    le = LabelEncoder()
+    y = le.fit_transform(df['Customer_Sentiment'])
+    print(f"Classes found: {le.classes_}")
+    print(f"Using text column: {text_col}")
+    
+    # TF-IDF with n-grams
+    vectorizer = TfidfVectorizer(stop_words='english', ngram_range=(1, 2), max_features=40, min_df=2, max_df=0.85)
+    X = vectorizer.fit_transform(df[text_col])
+    
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    
+    print("Training and evaluating models...")
+    results, best_model_name, best_model = build_models(X_train, X_test, y_train, y_test)
+    
+    print("\n--- Model Evaluation ---")
+    for model_name, metrics in results.items():
+        print(f"\n{model_name}:")
+        for metric_name, value in metrics.items():
+            if metric_name == 'Best Params':
+                print(f"  {metric_name}: {value}")
+            elif metric_name != 'Model':
+                print(f"  {metric_name}: {value:.4f}" if not np.isnan(value) else f"  {metric_name}: N/A")
+                
+    # Save the best model, vectorizer, and label encoder
+    save_dir = '../../saved_models/classical_ml'
+    os.makedirs(save_dir, exist_ok=True)
+    
+    print(f"\nSaving best model ({best_model_name}) and preprocessing objects to {save_dir}...")
+    joblib.dump(best_model, os.path.join(save_dir, 'sentiment_model.pkl'))
+    joblib.dump(vectorizer, os.path.join(save_dir, 'sentiment_vectorizer.pkl'))
+    joblib.dump(le, os.path.join(save_dir, 'sentiment_label_encoder.pkl'))
+    print("Models saved successfully.")

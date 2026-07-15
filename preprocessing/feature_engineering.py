@@ -14,7 +14,7 @@ def main():
     # Load the real processed dataset
     dataset_path = 'data/processed_dataset.csv'
     if not os.path.exists(dataset_path):
-        dataset_path = 'hdfc_loan_dataset_processed.csv'
+        dataset_path = 'hdfc_loan_dataset_full_enriched_fixed_v2.csv'
         if not os.path.exists(dataset_path):
             raise FileNotFoundError(f"Processed dataset not found at {dataset_path}")
 
