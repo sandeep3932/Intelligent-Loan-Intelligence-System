@@ -100,7 +100,7 @@ if __name__ == "__main__":
     print(f"Using text column: {text_col}")
     
     # TF-IDF with n-grams
-    vectorizer = TfidfVectorizer(stop_words='english', ngram_range=(1, 2), max_features=40, min_df=2, max_df=0.85)
+    vectorizer = TfidfVectorizer(stop_words='english', ngram_range=(1, 2), max_features=5000, min_df=2, max_df=0.85)
     X = vectorizer.fit_transform(df[text_col])
     
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
