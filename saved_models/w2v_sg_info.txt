@@ -1,0 +1,25 @@
+=== w2v_sg Info ===
+Vector size: 100
+Vocabulary size: 98
+
+Vocabulary words (first 100):
+['applicant', 'request', 'application', 'cite', 'disbursal', 'relationship', 'approval', 'want', 'loan', 'time', 'valuation', 'review', 'manual', 'business', 'medical', 'communication', 'prompt', 'service', 'online', 'appreciative', 'bank', 'good', 'prior', 'processing', 'expedited', 'emergency', 'need', 'sensitive', 'due', 'fast', 'inr', 'amount', 'site', 'pending', 'conditional', 'recommend', 'check', 'background', 'needed', 'kyc', 'risk', 'high', 'quicker', 'expects', 'okay', 'neutral', 'repayment', 'flexible', 'rate', 'interest', 'competitive', 'asset', 'purchasing', 'guarantor', 'requires', 'document', 'verified', 'response', 'agent', 'inconsistent', 'wait', 'long', 'dissatisfied', 'cibil', 'manager', 'escalated', 'error', 'score', 'credit', 'complained', 'new', 'opted', 'customer', 'offer', 'approved', 'pre', 'eligible', 'stream', 'income', 'steady', 'emphasizes', 'expansion', 'used', 'branch', 'support', 'property', 'dispute', 'mention', 'turnaround', 'documentation', 'unhappy', 'process', 'satisfied', 'home', 'personal', 'auto', 'renovation', 'education']
+
+Sample vector for word 'applicant':
+[ 0.02326186  0.3468252   0.15761754  0.01601431 -0.02215955 -0.2665939
+  0.2184727   0.1430092  -0.08366459 -0.00411772 -0.03640396 -0.23751582
+  0.26450658  0.21486385  0.13532127  0.22904515  0.10746054 -0.06413212
+ -0.25645217 -0.51382464  0.36423695  0.24781542  0.1141471   0.01135252
+  0.06218028  0.18339807 -0.19839878  0.08222263  0.02371925  0.02902094
+  0.23921503  0.15487313  0.10531382 -0.21385913  0.08552223 -0.09497052
+  0.32160848  0.00597787  0.24375238  0.00228031 -0.06218537 -0.11700127
+ -0.18636715  0.03472826 -0.03924426  0.08450495 -0.18191752  0.47032636
+  0.14378984  0.14872737  0.06672126 -0.24121255  0.0549779  -0.1103674
+  0.18622784  0.24434344  0.08773786  0.0670754  -0.13263282  0.35139784
+  0.03563437 -0.08602205  0.14656736  0.10284974  0.12900464  0.1077603
+  0.20859598  0.16868508 -0.16199806  0.29289386 -0.1711452  -0.036264
+  0.04912427 -0.2798936  -0.04169571 -0.0234119  -0.09971023 -0.01904193
+  0.21988304 -0.07388485  0.00796809  0.13346492  0.0271224   0.14483973
+  0.03027966 -0.17012382  0.3740723   0.04109493  0.11069497  0.09838138
+  0.35930586  0.24804053  0.0766872   0.04107977  0.24627332  0.04279553
+ -0.02653306 -0.13362816 -0.00523041  0.12083302]

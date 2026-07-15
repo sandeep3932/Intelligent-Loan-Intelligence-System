@@ -1,0 +1,33 @@
+=== w2v_cbow Info ===
+Vector size: 100
+Vocabulary size: 98
+
+Vocabulary words (first 100):
+['applicant', 'request', 'application', 'cite', 'disbursal', 'relationship', 'approval', 'want', 'loan', 'time', 'valuation', 'review', 'manual', 'business', 'medical', 'communication', 'prompt', 'service', 'online', 'appreciative', 'bank', 'good', 'prior', 'processing', 'expedited', 'emergency', 'need', 'sensitive', 'due', 'fast', 'inr', 'amount', 'site', 'pending', 'conditional', 'recommend', 'check', 'background', 'needed', 'kyc', 'risk', 'high', 'quicker', 'expects', 'okay', 'neutral', 'repayment', 'flexible', 'rate', 'interest', 'competitive', 'asset', 'purchasing', 'guarantor', 'requires', 'document', 'verified', 'response', 'agent', 'inconsistent', 'wait', 'long', 'dissatisfied', 'cibil', 'manager', 'escalated', 'error', 'score', 'credit', 'complained', 'new', 'opted', 'customer', 'offer', 'approved', 'pre', 'eligible', 'stream', 'income', 'steady', 'emphasizes', 'expansion', 'used', 'branch', 'support', 'property', 'dispute', 'mention', 'turnaround', 'documentation', 'unhappy', 'process', 'satisfied', 'home', 'personal', 'auto', 'renovation', 'education']
+
+Sample vector for word 'applicant':
+[ 4.59679179e-02  4.04507935e-01  8.79361704e-02 -7.75645226e-02
+  1.70840368e-01 -3.62491131e-01  1.12950079e-01  4.58608389e-01
+ -2.17590258e-01 -6.12117536e-02 -2.03486726e-01 -4.58713800e-01
+  3.09291244e-01  1.94065183e-01  3.06354612e-01  1.50705669e-02
+  1.47340879e-01 -2.92181373e-01 -3.08266431e-01 -7.05558777e-01
+  4.07703608e-01  1.26149222e-01  1.52886316e-01 -5.84780760e-02
+ -1.29883170e-01  5.44957593e-02 -3.22440296e-01 -5.22423163e-03
+ -1.07906980e-03  9.95713490e-05  2.88286954e-01  1.45431101e-01
+  1.26190558e-01 -3.91404539e-01 -6.96904212e-02  4.79095988e-02
+  2.65806764e-01 -6.78623840e-02  1.16958410e-01 -1.55884162e-01
+  2.00389475e-02 -1.59004226e-01 -3.85830700e-02  4.43992168e-02
+  4.82333638e-02  6.65217489e-02 -2.32080773e-01  2.54690111e-01
+  1.52814552e-01  1.83339342e-01  1.86998293e-01 -2.82722473e-01
+  2.83357650e-02 -1.37024552e-01  1.37896135e-01  1.55505553e-01
+  1.37878403e-01  2.14152470e-01 -1.94452479e-01  2.62395710e-01
+  1.40059799e-01 -8.46266970e-02  1.95713565e-01  1.45225331e-01
+  8.62569660e-02  2.37734899e-01  1.34840786e-01  2.22694293e-01
+ -2.61470109e-01  3.16210389e-01 -2.41964012e-01 -3.71556208e-02
+  1.00048505e-01 -1.66008800e-01  6.84854314e-02 -8.20031986e-02
+ -2.62558181e-02  1.75735224e-02  1.67823583e-01 -3.29017416e-02
+ -8.22840035e-02  1.33855328e-01 -3.69210958e-01  2.44960263e-01
+ -1.22950308e-01 -1.62354186e-01  4.92841929e-01  2.20652312e-01
+  3.20996940e-01  2.55538702e-01  4.91009563e-01  2.06495911e-01
+ -2.09972057e-02  1.22444622e-01  4.34326053e-01  7.01777712e-02
+ -3.14427204e-02 -1.09255895e-01  4.57314290e-02 -1.44466192e-01]
